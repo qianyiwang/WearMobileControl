@@ -21,31 +21,30 @@ public class WatchListener extends WearableListenerService {
     public static final String BROADCAST_ACTION = "message_from_watch";
     Intent broadCastIntent;
     protected final int MESSAGE_READ = 1;
-    String msg_watch;
     android.os.Handler mHandler = new android.os.Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case MESSAGE_READ:
-
-                    if(msg_watch.equals("RIGHT")){
-                        GlobalValues.x += 300;
-                        GlobalValues.customView.invalidate();
-                    }
-                    else if(msg_watch.equals("LEFT")){
-                        GlobalValues.x -= 300;
-                        GlobalValues.customView.invalidate();
-                    }
-                    else if(msg_watch.equals("UP")){
-                        GlobalValues.y -= 300;
-                        GlobalValues.customView.invalidate();
-                    }
-                    else if(msg_watch.equals("DOWN")){
-                        GlobalValues.y += 300;
-                        GlobalValues.customView.invalidate();
-                    }
-                    break;
+                    GlobalValues.customView.invalidate();
+//                    if(msg_watch.equals("RIGHT")){
+//                        GlobalValues.x += 300;
+//                        GlobalValues.customView.invalidate();
+//                    }
+//                    else if(msg_watch.equals("LEFT")){
+//                        GlobalValues.x -= 300;
+//                        GlobalValues.customView.invalidate();
+//                    }
+//                    else if(msg_watch.equals("UP")){
+//                        GlobalValues.y -= 300;
+//                        GlobalValues.customView.invalidate();
+//                    }
+//                    else if(msg_watch.equals("DOWN")){
+//                        GlobalValues.y += 300;
+//                        GlobalValues.customView.invalidate();
+//                    }
+//                    break;
             }
         }
     };
@@ -65,10 +64,11 @@ public class WatchListener extends WearableListenerService {
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if (messageEvent.getPath().equalsIgnoreCase(START_ACTIVITY_PATH)){
-            msg_watch = new String(messageEvent.getData());
+            String msg_watch = new String(messageEvent.getData());
+            String[] parts = msg_watch.split(",");
+            GlobalValues.x = 3*Float.parseFloat(parts[0]);
+            GlobalValues.y = 3*Float.parseFloat(parts[1]);
             mHandler.obtainMessage(MESSAGE_READ).sendToTarget();
-//            broadCastIntent.putExtra("msg_watch", msg_watch);
-//            sendBroadcast(broadCastIntent);
             Log.e("WatchListener",msg_watch);
         }
     }

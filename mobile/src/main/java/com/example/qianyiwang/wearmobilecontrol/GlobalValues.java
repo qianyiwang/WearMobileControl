@@ -5,7 +5,7 @@ package com.example.qianyiwang.wearmobilecontrol;
  */
 
 public class GlobalValues {
-    public static int x = 200;
-    public static int y = 200;
+    public static float x = 0;
+    public static float y = 0;
     public static CustomView customView;
 }

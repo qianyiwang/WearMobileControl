@@ -27,7 +27,7 @@ import com.google.android.gms.wearable.Wearable;
 
 public class MainApp extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
-    private GestureDetectorCompat mDetector;
+//    private GestureDetectorCompat mDetector;
     private GoogleApiClient googleApiClient;
     public static String START_ACTIVITY_PATH = "/from-watch";
     private Node mNode = null;
@@ -36,7 +36,7 @@ public class MainApp extends Activity implements GoogleApiClient.ConnectionCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.round_activity_main_app);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        mDetector = new GestureDetectorCompat(this, new MyGestureListener());
+//        mDetector = new GestureDetectorCompat(this, new MyGestureListener());
 
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -70,7 +70,21 @@ public class MainApp extends Activity implements GoogleApiClient.ConnectionCallb
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        this.mDetector.onTouchEvent(event);
+//        this.mDetector.onTouchEvent(event);
+
+        int index = event.getActionIndex();
+        int action = event.getActionMasked();
+        int pointerId = event.getPointerId(index);
+
+        switch(action){
+            case MotionEvent.ACTION_MOVE:
+//                Log.e("pointXY: ", event.getX()+","+event.getY());
+                String coordinates = event.getX()+","+event.getY();
+                SendMessageToPhone sendMessageToPhone = new SendMessageToPhone();
+                sendMessageToPhone.execute(coordinates);
+                break;
+        }
+
         return super.onTouchEvent(event);
     }
 
@@ -88,7 +102,7 @@ public class MainApp extends Activity implements GoogleApiClient.ConnectionCallb
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d("GoogleApi", "onConnectionFailed:" + connectionResult);
     }
-
+/*
     class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
         private static final String DEBUG_TAG = "Gestures";
         private static final int SWIPE_MIN_DISTANCE = 120;
@@ -100,6 +114,8 @@ public class MainApp extends Activity implements GoogleApiClient.ConnectionCallb
 //            Log.d(DEBUG_TAG,"onDown: " + event.toString());
             return true;
         }
+
+
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2,
@@ -137,7 +153,7 @@ public class MainApp extends Activity implements GoogleApiClient.ConnectionCallb
             return true;
         }
     }
-
+*/
     public class SendMessageToPhone extends AsyncTask<String, Void, Void>{
 
         @Override
