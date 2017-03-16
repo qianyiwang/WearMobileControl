@@ -8,14 +8,18 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 
 public class MainApp extends AppCompatActivity{
 
-    // Called when the activity is first created.
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         GlobalValues.customView = new CustomView(this);
         setContentView(GlobalValues.customView);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
     }
 }

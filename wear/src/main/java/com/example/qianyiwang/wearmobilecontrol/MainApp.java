@@ -27,16 +27,57 @@ import com.google.android.gms.wearable.Wearable;
 
 public class MainApp extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
-//    private GestureDetectorCompat mDetector;
+    private GestureDetector mDetector;
     private GoogleApiClient googleApiClient;
     public static String START_ACTIVITY_PATH = "/from-watch";
     private Node mNode = null;
+
+    private float startX, startY, lastX, lastY, distanceX, distanceY;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.round_activity_main_app);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//        mDetector = new GestureDetectorCompat(this, new MyGestureListener());
+        mDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent motionEvent) {
+                return false;
+            }
+
+            @Override
+            public void onShowPress(MotionEvent motionEvent) {
+
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent motionEvent) {
+                return false;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent motionEvent) {
+            }
+
+            @Override
+            public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+                return false;
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+
+                SendMessageToPhone sendMessageToPhone = new SendMessageToPhone();
+                sendMessageToPhone.execute("action:double tap");
+
+                return super.onDoubleTap(e);
+            }
+        });
 
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -70,19 +111,39 @@ public class MainApp extends Activity implements GoogleApiClient.ConnectionCallb
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-//        this.mDetector.onTouchEvent(event);
+        this.mDetector.onTouchEvent(event);
 
         int index = event.getActionIndex();
         int action = event.getActionMasked();
         int pointerId = event.getPointerId(index);
-
         switch(action){
+
             case MotionEvent.ACTION_MOVE:
-//                Log.e("pointXY: ", event.getX()+","+event.getY());
-                String coordinates = event.getX()+","+event.getY();
+                if(lastX<event.getX()){
+                    distanceX = Math.abs(event.getX()-startX);
+                }
+                else{
+                    distanceX = -Math.abs(event.getX()-startX);
+                }
+                if(lastY<event.getY()){
+                    distanceY = Math.abs(event.getY()-startY);
+                }
+                else{
+                    distanceY = -Math.abs(event.getY()-startY);
+                }
+                String coordinates = distanceX+","+distanceY;
                 SendMessageToPhone sendMessageToPhone = new SendMessageToPhone();
                 sendMessageToPhone.execute(coordinates);
+                Log.e("pointXY: ", coordinates);
+                lastX = event.getX();
+                lastY = event.getY();
                 break;
+
+            case MotionEvent.ACTION_DOWN:
+                startX = event.getX();
+                startY = event.getY();
+                break;
+
         }
 
         return super.onTouchEvent(event);
